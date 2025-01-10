@@ -37,42 +37,164 @@
   }
 } */
 
-.app-container {
+.app-container{
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-}
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.add-user-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-add-user-container input {
-  padding: 8px;
-  font-size: 14px;
-  flex: 1;
-}
-.search-bar {
-  width: 300px;
-}
-.users-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.users-table th, .users-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-.users-table th {
-  background-color: #f4f4f4;
-}
-.users-table td {
-  text-transform: capitalize;
-}
+ }
+ 
+ .app-header{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+ }
+ 
+ .add-user-container{
+   display: flex;
+   align-items: center;
+   gap: 10px;
+ }
+ 
+ .add-user-container input{
+   padding: 8px;
+   font-size: 14px;
+   flex: 1;
+ }
+ 
+ .add-user-container input::placeholder{
+   color: grey;
+ }
+ 
+ .search-bar{
+   width: 300px;
+ }
+ 
+ .users-table{
+   width: 100%;
+   border-collapse: collapse; 
+ }
+ 
+ .users-table th, .users-table td{
+   border: 1px solid #ddd;
+   padding: 8px;
+   text-align: left;
+ }
+ 
+ .users-table th{
+   background-color: #f4f4f4;
+ }
+ 
+ .users-table td{
+   text-transform: capitalize;
+ }
+ 
+ .modal{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0,0,0,0.5);
+ }
+ 
+ .modal-content{
+   background-color: white;
+   padding: 20px;
+   border-radius: 5px;
+   width: 320px;
+   position: relative;
+   margin: auto;
+   text-align: center;
+ }
+ 
+ .modal-content .close-icon{
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   background: none;
+   border: none;
+   font-size: 20px;
+   cursor: pointer;
+   color: black;
+ }
+ 
+ .modal-content input{
+   margin: 5px 0;
+   padding: 10px;
+   font-size: 14px;
+   width: 100%;
+   box-sizing: border-box;
+   text-transform: capitalize;
+ }
+ 
+ .modal-content  label{
+   display: block;
+   margin-bottom: 5px;
+   font-weight: bold;
+   text-align: left;
+ }
+ 
+ button {
+   background-color: orange;
+   color: white;
+   border: none;
+   padding: 10px 15px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-size: 14px;
+ }
+ 
+ button:hover{
+   background-color: #e69500;
+ }
+ 
+ button.close-icon{
+   text-align: right;
+ }
+ 
+ .add-user-container button{
+   background-color: orange;
+   color: white;
+ }
+ 
+ .modal-content button{
+   background-color: orange;
+   color: white;
+   width: 150px;
+   margin: 20px auto;
+   display: block;
+ }
+ 
+ .success-message, 
+ .error-message{
+ margin-bottom: 10px;
+ padding: 10px;
+ border-radius: 5px;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ }
+ 
+ .success-message{
+   background-color: #d4edda;
+   color: #155724;
+ }
+ 
+ .error-message{
+   background-color: #f8d7da;
+   color: #721c24;
+ }
+ 
+ .success-message button,
+ .error-message button{
+ font-size: 16px;
+ line-height: 10px;
+ color: inherit;
+ background: none;
+ border: none;
+ cursor: pointer;
+ }
