@@ -1,74 +1,79 @@
 import React from "react";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import axios from "axios"
 import "./App.css"
 
-const App = ()=>{
+const App = () => {
   const [users, setUsers] = useState([])
-  const [newUser, setNewUser] = useState({id:"", course:"", name:""})
-  const [searchQuery, setSearchQuery]= useState("")
-  const [editUser, setEditUser]= useState(null)
-  const [isModalOpen, setIsModalOpen]= useState(false)
+  const [newUser, setNewUser] = useState({ id: "", course: "", name: "" })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [editUser, setEditUser] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
-  const [errorMessage, setErrorMessage]= useState("")
+  const [errorMessage, setErrorMessage] = useState("")
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchUsers()
   }, [])
 
-  const fetchUsers= async ()=>{
+  const fetchUsers = async () => {
     try {
       //const baseURL = process.env.REACT_APP_API_URL
       const usersData = await axios.get("http://localhost:3001/users")
       console.log("Usersdata:", JSON.stringify(usersData))
       //setUsers(usersData.data)
-    //  if(usersData.data)
+      //  if(usersData.data)
       setUsers(usersData.data.data)
-  } catch (error) {
+    } catch (error) {
       console.log("fetchUsers Error:", error)
     }
   }
 
-  const handleEditUser = (id)=>{
-   // alert("Button click")
-    const userToEdit = users.find((user)=>{
-      return user.id===id
-    } )
-    if(userToEdit){
+  const handleEditUser = (id) => {
+    // alert("Button click")
+    const userToEdit = users.find((user) => {
+      return user.id === id
+    })
+    if (userToEdit) {
       setEditUser(userToEdit)
       setIsModalOpen(true)
     }
-    else{
+    else {
       alert('User not found!')
     }
   }
 
-  const handleAddUser = async(id) => {
-    const newId = users.length > 0 ? Math.max(...users.map(user => user.id))+1 : 1
-    if(newUser.name && newUser.course) {
-      const response = await axios.post("http://localhost:3001/users", [{...newUser, id:newId}])
-      if(response.data.status === "Success") {
-        fetchUsers()
-        setNewUser({id:"", name:"", course:""})
-        setSuccessMessage(response.data.message)
-        setIsModalOpen(false)
-      } else {
-        fetchUsers()
-        setNewUser({id:"", name:"", course:""})
-        setErrorMessage(response.data.message)
-        setIsModalOpen(false)
+  const handleAddUser = async (id) => {
+    const newId = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1
+    try {
+      if (newUser.name && newUser.course) {
+        const response = await axios.post("http://localhost:3001/user", [{ ...newUser, id: newId }])
+        if (response.data.status === "Success") {
+          fetchUsers()
+          setNewUser({ id: "", name: "", course: "" })
+          setSuccessMessage(response.data.message)
+          setIsModalOpen(false)
+        } else {
+          fetchUsers()
+          setNewUser({ id: "", name: "", course: "" })
+          setErrorMessage(response.data.message)
+          setIsModalOpen(false)
+        }
+        setTimeout(() => {
+          setSuccessMessage("")
+          setErrorMessage("")
+        }, 6000)
       }
-      setTimeout(() => {
-        setSuccessMessage("")
-        setErrorMessage("")
-      }, 6000)
+    } catch (error) {
+      console.log("HandleDeleteError:", error)
+      await fetchUsers()
     }
   }
 
-  const handleDeleteUser = async(id) => {
+  const handleDeleteUser = async (id) => {
     try {
       const response = await axios.delete(`http://localhost:3001/user/${id}`)
-      if(response.data.status === "Success") {
+      if (response.data.status === "Success") {
         await fetchUsers()
         setSuccessMessage(response.data.message)
       } else {
@@ -76,92 +81,92 @@ const App = ()=>{
         await fetchUsers()
         setErrorMessage(response.data.message)
       }
-      setTimeout(()=>{
+      setTimeout(() => {
         setSuccessMessage("")
         setErrorMessage("")
       }, 6000)
       //throw new Error("Error occured")
-    } 
-    catch(error) {
+    }
+    catch (error) {
       console.log("HandleDeleteError:", error)
       await fetchUsers()
       setSuccessMessage(error)
     }
   }
 
-  const handleSaveEdit = async()=>{
-    if(editUser&&editUser.name&&editUser.course){
+  const handleSaveEdit = async () => {
+    if (editUser && editUser.name && editUser.course) {
       try {
-        const response= await axios.put(`http://localhost:3001/user/${editUser.id}`, {
-          name: editUser.name, 
+        const response = await axios.put(`http://localhost:3001/user/${editUser.id}`, {
+          name: editUser.name,
           course: editUser.course
         })
-        if(response.data.status === "Success"){
+        if (response.data.status === "Success") {
           fetchUsers()
           setIsModalOpen(false)
           setEditUser(null)
-          console.log(successMessage,response.data.message)
+          console.log(successMessage, response.data.message)
           setSuccessMessage(response.data.message)
-        }else{
+        } else {
           fetchUsers()
           setIsModalOpen(false)
           setEditUser(null)
           setErrorMessage(response.data.message)
           console.log("Error while updating the user data", JSON.stringify(response.data))
         }
-        setTimeout(()=>{
+        setTimeout(() => {
           setSuccessMessage("")
           setErrorMessage("")
         }, 6000)
-      }catch(error){
+      } catch (error) {
         console.log("handleSaveEdit error", error)
       }
-    }else{
+    } else {
       alert("Please fill out all required fields")
     }
   }
 
-  const filterUsers = users?
-  users.filter((user) => {
-    return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.id.toString().includes(searchQuery) ||
-    user.course.toLowerCase().includes(searchQuery.toLowerCase())
-  }):
-  []
+  const filterUsers = users ?
+    users.filter((user) => {
+      return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.id.toString().includes(searchQuery) ||
+        user.course.toLowerCase().includes(searchQuery.toLowerCase())
+    }) :
+    []
 
   return (<div className="app-container">
-    <header className="app-header"> 
-      <h1> 
+    <header className="app-header">
+      <h1>
         Team Members:
       </h1>
       <div className="add-user-container">
-      <input type="text" 
-      placeholder="Search by ID, Name or Course" 
-      value={searchQuery}
-      onChange={(e)=>{
-        return setSearchQuery(e.target.value)
-      }}
-      className="search-bar"></input>
-      <button onClick={() => {
-        setEditUser(null)
-        setIsModalOpen(true)
-      }}>Add New Member</button>
+        <input type="text"
+          placeholder="Search by ID, Name or Course"
+          value={searchQuery}
+          onChange={(e) => {
+            return setSearchQuery(e.target.value)
+          }}
+          className="search-bar"></input>
+        <button onClick={() => {
+          setEditUser(null)
+          setIsModalOpen(true)
+        }}>Add New Member</button>
       </div>
     </header>
-    {successMessage&&(
+    {successMessage && (
       <div className="success-message">
         <span>{successMessage}</span>
-        <button onClick={()=>{
+        <button onClick={() => {
           setSuccessMessage(" ")
-        }} style={{background:"none", border:"none", cursor:"pointer"}} > ✖</button>
+        }} style={{ background: "none", border: "none", cursor: "pointer" }} > ✖</button>
       </div>
     )}
-    {errorMessage&&(
+    {errorMessage && (
       <div className="error-message">
         <span>{errorMessage}</span>
-        <button onClick={()=>{
+        <button onClick={() => {
           setErrorMessage(" ")
-        }} style={{background:"none", border:"none", cursor:"pointer"}} > ✖</button>
+        }} style={{ background: "none", border: "none", cursor: "pointer" }} > ✖</button>
       </div>
     )}
     <table className="users-table">
@@ -175,28 +180,28 @@ const App = ()=>{
       </thead>
       <tbody>
         {
-          filterUsers.map((user)=>{
+          filterUsers.map((user) => {
             return (<tr key={user.id}>
               <td>{user.id}</td>
               <td>{user.name}</td>
               <td>{user.course}</td>
               <td>
-                <button onClick={()=>{
+                <button onClick={() => {
                   return handleEditUser(user.id)
                 }} style={{
                   background: "none", border: "none"
                 }}>
-                ✏️
+                  ✏️
                 </button>
 
-                <button onClick={()=>{
+                <button onClick={() => {
                   return handleDeleteUser(user.id)
                 }} style={{
                   background: "none", border: "none"
                 }}>
-                🗑️
+                  🗑️
                 </button>
-               
+
               </td>
             </tr>)
           })
@@ -206,27 +211,33 @@ const App = ()=>{
     {
       isModalOpen && (
         <div className="modal">
-          <div className="modal-content"> 
-            <button className="close-icon" onClick={()=>{
+          <div className="modal-content">
+            <button className="close-icon" onClick={() => {
               setIsModalOpen(false)
               setEditUser(null)
             }}>
               ✖
             </button>
-            <h2>Edit Member</h2>
-                <label>Name*</label>
-                <input type="text"
-                value={editUser.name}
-                onChange={(e)=>{
-                  return setEditUser({name: e.target.value, course: editUser.course, id: editUser.id})
-                }}></input>
-                 <label>Course*</label>
-                 <input type="text" 
-                 value={editUser.course}
-                onChange={(e)=>{
-                  return setEditUser({name: editUser.name, course: e.target.value, id: editUser.id})
-                }}></input>
-                <button onClick={handleSaveEdit}>Save</button>
+            <h2>{editUser ? "Edit Member" : "Add New Member"}</h2>
+            <label>Name*</label>
+            <input type="text"
+              value={editUser? editUser.name : newUser.name}
+              onChange={(e) => {
+                if(editUser) 
+                  setEditUser({ name: e.target.value, course: editUser.course, id: editUser.id })
+                else 
+                  setNewUser({...newUser, name:e.target.value})
+              }}></input>
+            <label>Course*</label>
+            <input type="text"
+              value={editUser ? editUser.course : newUser.course} 
+              onChange={(e) => {
+                if(editUser)
+                  setEditUser({ name: editUser.name, course: e.target.value, id: editUser.id }) 
+                else
+                  setNewUser({...newUser, course:e.target.value})
+              }}></input>
+            <button onClick={editUser ? handleSaveEdit : handleAddUser}>{editUser ? "Save" : "Submit"}</button>
           </div>
 
         </div>
